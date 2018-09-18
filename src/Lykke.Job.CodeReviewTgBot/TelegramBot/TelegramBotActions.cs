@@ -1,26 +1,49 @@
-﻿using Lykke.Job.CodeReviewTgBot.Settings.JobSettings;
+﻿using Lykke.Job.CodeReviewTgBot.AzureRepositories.PullRequests;
+using Lykke.Job.CodeReviewTgBot.Settings.JobSettings;
 using Octokit;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Lykke.Job.CodeReviewTgBot.TelegramBot
 {
     public class TelegramBotActions
     {
-        private static GitHubClient client = new GitHubClient(new ProductHeaderValue(CodeReviewTgBotSettings.BotName));
+        private readonly GitHubClient client;
 
-        private static string _organisation;
+        private readonly string _organization;
 
-        public TelegramBotActions(string organisation, string token)
+        public TelegramBotActions(string organization, string token, string botName)
         {
-            _organisation = organisation.ToLower().Replace(' ', '-');
+            client = new GitHubClient(new ProductHeaderValue(botName));
+            _organization = organization.ToLower().Replace(' ', '-');
             var tokenAuth = new Credentials(token);
             client.Credentials = tokenAuth;
         }
 
-        public bool HasNewPulls
+        public async Task<IReadOnlyList<Repository>> GetReposInOrganisation()
+        {
+            return await client.Repository.GetAllForOrg(_organization);
+        }
 
+        public async Task<IReadOnlyList<PullRequest>> GetPullsForRepo(long repoId)
+        {
+            return await client.PullRequest.GetAllForRepository(repoId);
+        }
+
+        public async Task<IReadOnlyList<User>> GetUsersForRepo(long repoId)
+        {
+            var teams = await client.Repository.GetAllTeams(repoId);
+
+            var result = new List<User>();
+            foreach (var team in teams)
+            {
+                var users = await client.Organization.Team.GetAllMembers(team.Id);
+                result.AddRange(users);
+            }
+            return result;
+        }
 
     }
 }

@@ -84,6 +84,7 @@ namespace Lykke.Job.CodeReviewTgBot
                 builder.Populate(services);
 
                 builder.RegisterModule(new JobModule(appSettings.CodeReviewTgBotJob, settingsManager.Nested(x => x.CodeReviewTgBotJob)));
+                builder.RegisterModule(new DbModule(settingsManager));
 
                 ApplicationContainer = builder.Build();
 

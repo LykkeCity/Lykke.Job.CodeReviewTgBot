@@ -5,8 +5,10 @@ using Lykke.Job.CodeReviewTgBot.Core.Services;
 using Lykke.Job.CodeReviewTgBot.Services;
 using Lykke.Job.CodeReviewTgBot.Settings.JobSettings;
 using Lykke.Job.CodeReviewTgBot.PeriodicalHandlers;
+using Lykke.Job.CodeReviewTgBot.TelegramBot;
 using Lykke.SettingsReader;
 using Microsoft.Extensions.DependencyInjection;
+using Common;
 
 namespace Lykke.Job.CodeReviewTgBot.Modules
 {
@@ -45,6 +47,12 @@ namespace Lykke.Job.CodeReviewTgBot.Modules
                 .As<IShutdownManager>()
                 .SingleInstance();
 
+            builder.RegisterType<TelegramBotService>()
+                .As<IStartable>()
+                .As<IStopable>()
+                .WithParameter(TypedParameter.From(_settings))
+                .SingleInstance();
+
             RegisterPeriodicalHandlers(builder);
 
             // TODO: Add your dependencies here
@@ -56,7 +64,7 @@ namespace Lykke.Job.CodeReviewTgBot.Modules
         {
             // TODO: You should register each periodical handler in DI container as IStartable singleton and autoactivate it
 
-            builder.RegisterType<MyPeriodicalHandler>()
+            builder.RegisterType<CheckPullsHandler>()
                 .As<IStartable>()
                 .SingleInstance();
         }

@@ -19,6 +19,7 @@
     <PackageReference Include="Lykke.Common.ApiLibrary" Version="1.10.1" />
     <PackageReference Include="Lykke.Logs" Version="5.2.0" />
     <PackageReference Include="Lykke.MonitoringServiceApiCaller" Version="1.6.2" />
+    <PackageReference Include="Lykke.Service.LykkeDevelopers-test" Version="1.0.10" />
     <PackageReference Include="Lykke.SettingsReader" Version="4.0.1" />
     <PackageReference Include="Lykke.SlackNotification.AzureQueue" Version="2.0.5" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.4.1" />
@@ -28,6 +29,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.1.3" />
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.1.1" />
     <PackageReference Include="Octokit" Version="0.31.0" />
+    <PackageReference Include="Telegram.Bot" Version="14.10.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lykke.Job.CodeReviewTgBot.AzureRepositories\Lykke.Job.CodeReviewTgBot.AzureRepositories.csproj" />
