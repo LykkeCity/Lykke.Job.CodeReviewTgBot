@@ -3,6 +3,7 @@ using Lykke.Job.CodeReviewTgBot.Settings.JobSettings;
 using Octokit;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -35,7 +36,10 @@ namespace Lykke.Job.CodeReviewTgBot.TelegramBot
         public async Task<IReadOnlyList<User>> GetUsersForRepo(long repoId)
         {
             var teams = await client.Repository.GetAllTeams(repoId);
+            var contributors = await client.Repository.GetAllContributors(repoId);
 
+            var user = contributors.First();
+            user.
             var result = new List<User>();
             foreach (var team in teams)
             {

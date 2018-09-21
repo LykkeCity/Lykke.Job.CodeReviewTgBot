@@ -65,7 +65,6 @@ namespace Lykke.Job.CodeReviewTgBot.TelegramBot
             //    ServicseIsRunning = false;
             //}
 
-
 #if DEBUG
             Console.WriteLine("BotOnMessageReceived - " + messageEventArgs.Message.Text);
 #endif
@@ -130,7 +129,7 @@ namespace Lykke.Job.CodeReviewTgBot.TelegramBot
         {
             const string usage = @"
 Usage:
-/addgit - to start creating repository
+/addGit - to start creating repository
 /resetMyTeam - to reset your team";
 
             await _bot.SendTextMessageAsync(
@@ -159,21 +158,30 @@ Usage:
                     var lastPull = oldActivePulls.FirstOrDefault(p => p.RowKey == pull.Id.ToString());
                     var pullToAdd = new ActivePullRequest() { RowKey = pull.Id.ToString(), PullRequestName = pull.Title, PullRequestUrl = pull.Url };
                     allActivePulls.Add(pullToAdd);
-                    if (lastPull != null && CheckTotalTimeLimit(lastPull.Timestamp.UtcDateTime))
-                    {
-                        continue;
-                    }
+                    //if (lastPull != null && CheckTotalTimeLimit(lastPull.Timestamp.UtcDateTime))
+                    //{
+                    //    continue;
+                    //}
                        
                     var message = repo.Name + " _ " + pull.Title + '\n';                    
-                    message += "ID:" + pull.Id + '\n';                    
+                    //message += "ID:" + pull.Id + '\n';                    
                     var users = await _actions.GetUsersForRepo(repo.Id);
                     foreach (var user in users)
                     {
                         if (!message.Contains('@' + user.Login + '\n'))
                         {
-                            //TODO: Get info from LykkeDevelopers
-                            //_devClient.Developer.
-                            message += '@' + user.Login + '\n';
+                           
+                            var dev = await _devClient.Developer.GetDeveloperByGitAcc(user.Login);
+
+                            if (dev != null && !String.IsNullOrEmpty(dev.TelegramAcc))
+                            {
+                                message += '@' + dev.TelegramAcc + '\n';
+                            }
+                            else
+                            {
+                                message += "GitHub user with login @" + user.Login + '\n';
+                            }
+                            
                         }
                     }
 
@@ -196,7 +204,6 @@ Usage:
 
             _log.Info("Finish checking.");
         }
-
 
         private bool CheckTotalTimeLimit(DateTime dateTime)
         {
